@@ -40,18 +40,34 @@
     .activity-header { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.8rem; }
     .task-check { margin-top: 0.2rem; width: 1.3rem; height: 1.3rem; accent-color: #7b1fa2; cursor: pointer; flex-shrink: 0; }
     .task-text { flex: 1; font-size: 0.95rem; font-weight: 500; color: #2d0a4a; }
-    .activity-media { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 0.8rem; }
-    .media-zone { position: relative; background: #f0e6f5; border: 2px dashed #9c4dcc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; min-height: 120px; transition: all 0.3s; }
-    .media-zone:hover { background: #e8d9f0; border-color: #7b1fa2; }
+    .activity-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+    .media-item { position: relative; background: #f0e6f5; border: 2px dashed #9c4dcc; border-radius: 8px; overflow: hidden; min-height: 120px; }
+    .media-item.has-image { border: 2px solid #9c4dcc; }
+    .media-zone { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; min-height: 120px; width: 100%; }
+    .media-zone:hover .media-overlay { opacity: 1; }
     .zone-content { padding: 0.8rem; text-align: center; font-size: 0.75rem; color: #6a1b9a; }
-    .media-preview { width: 100%; height: 100%; min-height: 120px; object-fit: cover; }
+    .media-preview { width: 100%; height: 100%; min-height: 120px; object-fit: cover; cursor: pointer; }
     .media-preview.blurred { filter: blur(15px); }
+    .media-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(74, 26, 107, 0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; gap: 0.5rem; flex-wrap: wrap; padding: 0.5rem; }
+    .media-overlay button { background: white; color: #4a1a6b; border: none; padding: 0.3rem 0.6rem; border-radius: 0.5rem; font-size: 0.7rem; cursor: pointer; transition: 0.2s; }
+    .media-overlay button:hover { background: #7b1fa2; color: white; transform: scale(1.05); }
     .lock-toggle { position: absolute; top: 5px; right: 5px; background: rgba(255, 255, 255, 0.95); border: 1px solid #9c4dcc; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.15); color: #4a1a6b; }
     .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(74, 26, 107, 0.9); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; text-align: center; z-index: 5; cursor: pointer; border-radius: 6px; }
     .lock-overlay span { padding: 0.5rem; }
     .pdf-indicator { font-size: 0.75rem; color: #6a1b9a; font-weight: bold; text-align: center; padding: 0.5rem; }
+    .add-media-btn { background: #ede0f5; border: none; color: #4a1a6b; padding: 0.3rem 0.8rem; border-radius: 1rem; font-size: 0.7rem; cursor: pointer; transition: 0.2s; margin-top: 0.5rem; }
+    .add-media-btn:hover { background: #9c4dcc; color: white; }
     .add-activity-btn { background: #7b1fa2; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 3rem; font-weight: 500; cursor: pointer; transition: 0.3s; font-size: 0.9rem; margin-top: 1rem; }
     .add-activity-btn:hover { background: #6a1b9a; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(106, 13, 173, 0.3); }
+
+    /* Lightbox for image preview */
+    .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999; justify-content: center; align-items: center; padding: 2rem; }
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 0.5rem; }
+    .lightbox .close-lightbox { position: absolute; top: 20px; right: 30px; color: white; font-size: 3rem; cursor: pointer; transition: 0.3s; }
+    .lightbox .close-lightbox:hover { color: #9c4dcc; transform: scale(1.2); }
+    .lightbox .download-btn { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: #7b1fa2; color: white; border: none; padding: 0.8rem 2rem; border-radius: 3rem; font-weight: 500; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+    .lightbox .download-btn:hover { background: #6a1b9a; transform: translateX(-50%) scale(1.05); }
 
     .principle-card { background: #faf5ff; border-radius: 1rem; padding: 1.2rem; margin-bottom: 1rem; border: 1px solid #ede0f5; }
     .principle-title { font-size: 1.2rem; font-weight: 600; color: #4a1a6b; margin-bottom: 0.5rem; }
@@ -106,6 +122,9 @@
       .side-nav { width: 100%; height: auto; position: relative; top: 0; }
       h1 { font-size: 2.2rem; }
       .section-title { font-size: 1.6rem; }
+      .activity-media { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
       .activity-media { grid-template-columns: 1fr; }
     }
   </style>
@@ -120,6 +139,13 @@
     <div class="error-msg" id="loginError">Incorrect password. Please try again with love...</div>
     <button class="btn-login" id="btnLogin">Open the Album</button>
   </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+  <img id="lightboxImg" src="" alt="Enlarged view">
+  <button class="download-btn" onclick="downloadCurrentImage()">📥 Download</button>
 </div>
 
 <div class="main-wrapper">
@@ -154,14 +180,14 @@
           <input type="text" id="tracker_location" placeholder="Location:" style="flex: 1; min-width: 120px;">
         </div>
         <textarea rows="2" id="tracker_memory_note" placeholder="Our most beautiful memory of this moment..."></textarea>
-        <div class="photo-mounts" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
-          <div class="polaroid" style="background: #fff; padding: 0.8rem; box-shadow: 0 4px 12px rgba(106,13,173,0.1); text-align: center; border-radius: 12px; flex: 1; min-width: 150px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+          <div style="flex:1; min-width:150px; background:#f0e6f5; padding:0.8rem; border-radius:1rem;">
             <div class="media-zone" onclick="triggerUpload('tracker_media_0')" style="min-height: 100px;">
               <input type="file" id="tracker_media_0" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
               <div class="zone-content" id="tracker_media_0_view">📸 PHOTO 1</div>
             </div>
           </div>
-          <div class="polaroid" style="background: #fff; padding: 0.8rem; box-shadow: 0 4px 12px rgba(106,13,173,0.1); text-align: center; border-radius: 12px; flex: 1; min-width: 150px;">
+          <div style="flex:1; min-width:150px; background:#f0e6f5; padding:0.8rem; border-radius:1rem;">
             <div class="media-zone" onclick="triggerUpload('tracker_media_1')" style="min-height: 100px;">
               <input type="file" id="tracker_media_1" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
               <div class="zone-content" id="tracker_media_1_view">📸 PHOTO 2</div>
@@ -261,8 +287,8 @@
   // CONFIGURATION & CONSTANTS
   // ==========================================
   const SECRET_PASSWORD = "love101";
-  const MAX_FILE_SIZE = 4 * 1024 * 1024 * 1024;
-  const STORAGE_KEY = 'divine_journey_master_v4';
+  const MAX_FILE_SIZE = 250 * 1024 * 1024; // 250MB
+  const STORAGE_KEY = 'divine_journey_master_v5';
   const AUTH_KEY = 'divine_journey_auth_v3';
 
   // ==========================================
@@ -274,6 +300,7 @@
   let lockedMedias = {};
   let saveTimeout = null;
   let activityList = [];
+  let currentLightboxSrc = '';
 
   // ==========================================
   // AUTHENTICATION
@@ -318,6 +345,40 @@
   });
 
   // ==========================================
+  // LIGHTBOX FUNCTIONS
+  // ==========================================
+  window.openLightbox = function(src) {
+    currentLightboxSrc = src;
+    const lightbox = document.getElementById('lightbox');
+    const img = document.getElementById('lightboxImg');
+    img.src = src;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeLightbox = function() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  window.downloadCurrentImage = function() {
+    if (currentLightboxSrc) {
+      const link = document.createElement('a');
+      link.href = currentLightboxSrc;
+      link.download = 'memory_' + Date.now() + '.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  // Close lightbox on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // ==========================================
   // DATA RENDERING
   // ==========================================
   const defaultActivities = [
@@ -338,6 +399,37 @@
     "Volunteer together for a cause"
   ];
 
+  // Media management per activity
+  let activityMedia = {}; // { activityIndex: [mediaId1, mediaId2, ...] }
+
+  function getActivityMedia(activityIndex) {
+    if (!activityMedia[activityIndex]) {
+      activityMedia[activityIndex] = [];
+    }
+    return activityMedia[activityIndex];
+  }
+
+  function addMediaToActivity(activityIndex) {
+    const mediaList = getActivityMedia(activityIndex);
+    const mediaId = `activity_media_${activityIndex}_${mediaList.length}`;
+    mediaList.push(mediaId);
+    renderBucketList();
+    setChangesDetected();
+  }
+
+  function deleteMediaFromActivity(activityIndex, mediaId) {
+    const mediaList = getActivityMedia(activityIndex);
+    const index = mediaList.indexOf(mediaId);
+    if (index > -1) {
+      mediaList.splice(index, 1);
+      // Also remove from storage
+      delete mediaStorageUrls[mediaId];
+      delete lockedMedias[mediaId];
+      renderBucketList();
+      setChangesDetected();
+    }
+  }
+
   function renderBucketList() {
     const container = document.getElementById('bucketList11');
     if(!container) return;
@@ -346,33 +438,51 @@
       activityList = [...defaultActivities];
     }
     
-    container.innerHTML = activityList.map((item, index) => `
+    container.innerHTML = activityList.map((item, index) => {
+      const mediaList = getActivityMedia(index);
+      
+      return `
       <div class="activity-card" data-index="${index}">
         <div class="activity-header">
           <input type="checkbox" class="task-check" id="activity_check_${index}">
           <label for="activity_check_${index}" class="task-text">${item}</label>
         </div>
         <div class="activity-media">
-          <div class="media-zone" onclick="triggerUpload('activity_media_${index}_0')" style="min-height: 100px;">
-            <input type="file" id="activity_media_${index}_0" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
-            <div class="zone-content" id="activity_media_${index}_0_view">📸 Picture 1</div>
-          </div>
-          <div class="media-zone" onclick="triggerUpload('activity_media_${index}_1')" style="min-height: 100px;">
-            <input type="file" id="activity_media_${index}_1" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
-            <div class="zone-content" id="activity_media_${index}_1_view">📸 Picture 2</div>
-          </div>
+          ${mediaList.map(mediaId => `
+            <div class="media-item has-image" id="media_container_${mediaId}">
+              <div class="media-zone" onclick="event.stopPropagation();">
+                <div class="zone-content" id="${mediaId}_view">
+                  <div class="media-overlay">
+                    <button onclick="event.stopPropagation(); deleteMediaFromActivity(${index}, '${mediaId}')">🗑️ Delete</button>
+                    <button onclick="event.stopPropagation(); triggerUpload('${mediaId}')">🔄 Replace</button>
+                    <button onclick="event.stopPropagation(); toggleMediaLock(event, '${mediaId}', 'image/jpeg')">🔒 Lock</button>
+                  </div>
+                  📸 Click to upload
+                </div>
+                <input type="file" id="${mediaId}" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
+              </div>
+            </div>
+          `).join('')}
+          ${mediaList.length < 8 ? `<button class="add-media-btn" onclick="addMediaToActivity(${index})">➕ Add Picture</button>` : ''}
         </div>
         <div style="margin-top: 0.5rem;">
           <input type="text" id="activity_note_${index}" placeholder="Add a note about this activity..." style="font-size: 0.85rem; margin-top: 0.3rem;">
         </div>
-        <button style="background: #c62828; font-size: 0.75rem; padding: 0.3rem 0.8rem; margin-top: 0.5rem;" onclick="removeActivity(${index})">🗑️ Remove</button>
+        <button style="background: #c62828; font-size: 0.75rem; padding: 0.3rem 0.8rem; margin-top: 0.5rem;" onclick="removeActivity(${index})">🗑️ Remove Activity</button>
       </div>
-    `).join('');
+    `}).join('');
+
+    // Restore media after rendering
+    for (const mediaId in mediaStorageUrls) {
+      const m = mediaStorageUrls[mediaId];
+      renderMedia(mediaId, m.src, m.type, !!lockedMedias[mediaId]);
+    }
   }
 
   function removeActivity(index) {
     if (confirm(`Remove "${activityList[index]}" from your bucket list?`)) {
       activityList.splice(index, 1);
+      delete activityMedia[index];
       renderBucketList();
       setChangesDetected();
     }
@@ -448,13 +558,13 @@
 
         <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem;">
           <div style="flex:1; min-width:140px; background:#f0e6f5; padding:0.8rem; border-radius:1rem;">
-            <div class="media-zone" style="height:110px;" onclick="triggerUpload('month_snap_${i}_0')">
+            <div class="media-zone" onclick="triggerUpload('month_snap_${i}_0')" style="min-height: 100px;">
               <input type="file" id="month_snap_${i}_0" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
               <div class="zone-content" id="month_snap_${i}_0_view">📸 Photo 1</div>
             </div>
           </div>
           <div style="flex:1; min-width:140px; background:#f0e6f5; padding:0.8rem; border-radius:1rem;">
-            <div class="media-zone" style="height:110px;" onclick="triggerUpload('month_snap_${i}_1')">
+            <div class="media-zone" onclick="triggerUpload('month_snap_${i}_1')" style="min-height: 100px;">
               <input type="file" id="month_snap_${i}_1" style="display:none;" onchange="handleFileSelect(event)" accept="image/*,video/*,application/pdf">
               <div class="zone-content" id="month_snap_${i}_1_view">📸 Photo 2</div>
             </div>
@@ -472,6 +582,14 @@
         });
       }
     });
+
+    // Restore monthly media
+    for (const mediaId in mediaStorageUrls) {
+      if (mediaId.startsWith('month_snap_')) {
+        const m = mediaStorageUrls[mediaId];
+        renderMedia(mediaId, m.src, m.type, !!lockedMedias[mediaId]);
+      }
+    }
   }
 
   function renderAnnualDashboard() {
@@ -509,7 +627,7 @@
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
-      alert(`The file is too large (max ${MAX_FILE_SIZE/1024/1024}MB). Please choose a smaller file.`);
+      alert(`The file is too large (max 250MB). Please choose a smaller file.`);
       event.target.value = '';
       return;
     }
@@ -538,21 +656,60 @@
         <div class="lock-overlay" onclick="unlockSingleMedia(event, '${zoneId}', '${type}')">
           <span>🔒 Hidden<br><small>Click to reveal</small></span>
         </div>
-        <img class="media-preview blurred" src="${src || ''}" alt="Locked media">
+        <img class="media-preview blurred" src="${src || ''}" alt="Locked media" onclick="event.stopPropagation();">
       `;
     } else {
       if (type.startsWith('image/')) {
-        html = `<img class="media-preview" src="${src}" alt="Uploaded image" style="min-height: 120px;">`;
+        html = `<img class="media-preview" src="${src}" alt="Uploaded image" onclick="event.stopPropagation(); openLightbox('${src}')" style="min-height: 120px; cursor: pointer;">`;
       } else if (type.startsWith('video/')) {
-        html = `<video class="media-preview" controls src="${src}" style="min-height: 120px;"></video>`;
+        html = `<video class="media-preview" controls src="${src}" style="min-height: 120px;" onclick="event.stopPropagation();"></video>`;
       } else if (type === 'application/pdf') {
         html = `<div class="pdf-indicator">📄 PDF<br><a href="${src}" target="_blank" style="color:#6a1b9a;">Open</a></div>`;
       }
-      html += `<button type="button" class="lock-toggle" onclick="toggleMediaLock(event, '${zoneId}', '${type}')">🔓</button>`;
+      // Add overlay with buttons
+      html += `
+        <div class="media-overlay">
+          <button onclick="event.stopPropagation(); downloadImage('${src}')">📥 Download</button>
+          <button onclick="event.stopPropagation(); deleteMedia('${zoneId}')">🗑️ Delete</button>
+          <button onclick="event.stopPropagation(); toggleMediaLock(event, '${zoneId}', '${type}')">🔒 Lock</button>
+        </div>
+      `;
     }
 
     viewZone.innerHTML = html;
+    viewZone.closest('.media-zone')?.classList.add('has-image');
   }
+
+  window.downloadImage = function(src) {
+    const link = document.createElement('a');
+    link.href = src;
+    link.download = 'memory_' + Date.now() + '.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  window.deleteMedia = function(zoneId) {
+    if (confirm('Delete this media?')) {
+      delete mediaStorageUrls[zoneId];
+      delete lockedMedias[zoneId];
+      delete mediaFilesToUpload[zoneId];
+      
+      // Remove from activity media lists
+      for (const index in activityMedia) {
+        const list = activityMedia[index];
+        const pos = list.indexOf(zoneId);
+        if (pos > -1) {
+          list.splice(pos, 1);
+          break;
+        }
+      }
+      
+      renderBucketList();
+      renderMonthlyReviews();
+      setChangesDetected();
+    }
+  };
 
   window.toggleMediaLock = function(e, zoneId, type) {
     e.stopPropagation();
@@ -666,6 +823,7 @@
         medias: mediaStorageUrls,
         locks: lockedMedias,
         activities: activityList,
+        activityMedia: activityMedia,
         timestamp: new Date().toISOString()
       };
 
@@ -702,7 +860,10 @@
 
       if(pack.activities && pack.activities.length > 0) {
         activityList = pack.activities;
-        renderBucketList();
+      }
+      
+      if(pack.activityMedia) {
+        activityMedia = pack.activityMedia;
       }
 
       if(pack.texts) {
@@ -726,6 +887,8 @@
 
       if(pack.medias) {
         mediaStorageUrls = pack.medias;
+        renderBucketList();
+        renderMonthlyReviews();
         for(const zoneId in mediaStorageUrls) {
           const m = mediaStorageUrls[zoneId];
           renderMedia(zoneId, m.src, m.type, !!lockedMedias[zoneId]);
